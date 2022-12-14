@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="DataTemplatesDictionary" 
+                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                    xmlns:local="clr-namespace:ReplayFixer">
+
+    <DataTemplate x:Key="ReplayListViewTemplate" DataType="local:Replay">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Margin="5,0" Text="{Binding Path=ID, StringFormat={}{0}.}" />
+            <TextBlock Margin="5,0" Text="{Binding Path=MapName}" />
+            <ui:Button Margin="5,0" Icon="ZoomIn16" Appearance="Transparent" IsEnabled="False"/>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

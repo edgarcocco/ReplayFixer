@@ -1,0 +1,5 @@
+﻿1.0.1
+- Stream was left open after creating replays.data for the first time.
+
+1.0.2
+- Support new datetime format

@@ -1,0 +1,130 @@
+﻿<ui:UiPage x:Class="ReplayFixer.Views.Pages.MethodOnePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Method One" Loaded="UiPage_Loaded" 
+      >
+    <Grid Margin="18,0,18,18">
+        <Grid x:Name="MainGrid" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" FontWeight="Medium" Text="Working Replay List" />
+                    <Grid Margin="0,10" Grid.Row="1">
+                    <Border>
+                        <ListView Margin="0,10" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" 
+                              ItemsSource="{Binding ViewModel.WorkingReplaysList}" ItemTemplate="{StaticResource ReplayListViewTemplate}" >
+                            <ListView.Template>
+                                <ControlTemplate>
+                                    <ScrollViewer Focusable="False">
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </ControlTemplate>
+                            </ListView.Template>
+                        </ListView>
+                        </Border>
+                    </Grid>
+                    <ui:Button Grid.Row="2" Content="1. Load Working Replay" HorizontalAlignment="Stretch" >
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="Click">
+                                <behaviors:InvokeCommandAction Command="{Binding ViewModel.OpenFileDialogCommand}" CommandParameter="OpenFileDialogWorkingReplay" />
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </ui:Button>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Margin="5,0" TextWrapping="Wrap" FontWeight="Medium" FontSize="12">2. Drag &amp; drop a replay in this box or click it to open a replay to fix</TextBlock>
+                    <ui:Card Grid.Row="1" Margin="5,0" VerticalAlignment="Stretch" AllowDrop="True">
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger EventName="Drop">
+                                <behaviors:InvokeCommandAction Command="{Binding ViewModel.OnFileDropCommand}" PassEventArgsToCommand="True" />
+                            </behaviors:EventTrigger>
+                            <behaviors:EventTrigger EventName="MouseDown">
+                                <behaviors:InvokeCommandAction Command="{Binding ViewModel.OpenFileDialogCommand}" CommandParameter="ReplayToFixCardMouseDown" PassEventArgsToCommand="True" />
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                        <TextBlock HorizontalAlignment="Center" Text="{Binding ViewModel.ReplayToFixStatus}"></TextBlock>
+                    </ui:Card>
+                </Grid>
+            </Grid>
+            <GroupBox Grid.Row="1" Margin="0,5">
+                <GroupBox.Header>
+                    Output
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock>Path:</TextBlock>
+                            <ui:TextBox IsEnabled="{Binding ViewModel.EnableFixSection}" Text="{Binding ViewModel.OutputPath}" />
+
+                        </StackPanel>
+                        <TextBlock Text=" / " Grid.Row="0" Grid.Column="1"/>
+                        <StackPanel Grid.Row="0" Grid.Column="2">
+                            <TextBlock>File Name:</TextBlock>
+                            <ui:TextBox IsEnabled="{Binding ViewModel.EnableFixSection}" Text="{Binding ViewModel.OutputFileName}" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0">
+                            <TextBlock Text="Options"/>
+                            <CheckBox IsChecked="{Binding ViewModel.MatchReplayOutput}" IsEnabled="False" Content="Match loaded replay output path" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+            <ui:Button Grid.Row="2" IsEnabled="{Binding ViewModel.EnableFixSection}" Background="{DynamicResource ControlFillColorSecondaryBrush}" Content="3. Fix Replay" HorizontalAlignment="Stretch">
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="Click">
+                        <behaviors:CallMethodAction TargetObject="{Binding ViewModel}" MethodName="OnFixReplayClick" />
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+            </ui:Button>
+        </Grid>
+        <Grid x:Name="LoadingGrid" d:Visibility="Hidden">
+            <StackPanel VerticalAlignment="Center">
+                <ui:ProgressRing Progress="{Binding ViewModel.FileOperationProgress}" />
+                <TextBlock
+                    Margin="0,12,0,0"
+                    FontSize="16"
+                    FontWeight="Medium"
+                    Text="Page loading shouldn't take long now..."
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</ui:UiPage>

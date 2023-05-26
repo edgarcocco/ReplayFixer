@@ -4,6 +4,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,12 +28,15 @@ namespace ReplayFixer.Views
     public partial class  Container : INavigationWindow
     {
 
-        public Container(INavigationService navigationService, IPageService pageService, IOptions<AppConfig> options)
+        public string TitleBar { get; set; }
+        public Container(INavigationService navigationService, IPageService pageService, IDialogService dialogService,IOptions<AppConfig> options)
         {
             DataContext = this;
+            this.TitleBar = $"Replay Fixer {Assembly.GetExecutingAssembly().GetName().Version.ToString(3)}";
             InitializeComponent();
             SetPageService(pageService);
             navigationService.SetNavigationControl(RootNavigation);
+            dialogService.SetDialogControl(RootDialog);
             Loaded += Container_Loaded;
         }
 

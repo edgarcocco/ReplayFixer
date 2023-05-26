@@ -6,13 +6,9 @@ using ReplayFixer.Services;
 using ReplayFixer.Services.Contracts;
 using ReplayFixer.Views;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
+using AutoUpdaterDotNET;
+using Microsoft.Extensions.Options;
 using Wpf.Ui.Demo.Services;
 using Wpf.Ui.Mvvm.Contracts;
 using Wpf.Ui.Mvvm.Services;
@@ -49,6 +45,7 @@ namespace ReplayFixer
                         services.AddTransient<MessageService>();
                         
                         services.AddSingleton<IPageService, PageService>();
+                        services.AddSingleton<IDialogService, DialogService>();
                         services.AddSingleton<IThemeService, ThemeService>();
                         services.AddSingleton<INavigationService, NavigationService>();
                         //services.AddSingleton<INotifyIconService, NotifyIconService>();
@@ -57,7 +54,7 @@ namespace ReplayFixer
                         services.AddScoped(typeof(IFileService<>), typeof(FileService<>));
 
 
-                        services.AddScoped<INavigationWindow, Views.Container>();
+                        services.AddScoped<INavigationWindow, Container>();
 
                         services.AddScoped<Views.Pages.Dashboard>();
                         services.AddScoped<ViewModels.DashboardViewModel>();
@@ -82,8 +79,13 @@ namespace ReplayFixer
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
             await _host.StartAsync();
+
             var container = _host.Services.GetService<Container>();
             container?.Show();
+
+            var appConfig = _host.Services.GetService<IOptions<AppConfig>>()?.Value;
+            if (appConfig != null) AutoUpdater.Start(appConfig.AutoUpdaterFile);
+
         }
 
         private async void Application_Exit(object sender, ExitEventArgs e)

@@ -1,0 +1,14 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  },
+  "AppConfig": {
+    "Theme": "Light",
+    "Language": "English",
+    "ReplayDatabase": "replays.data",
+    "GithubPAT": "github PAT for auto updater to work",
+    "AutoUpdaterFile": "https://raw.githubusercontent.com/edgarcocco/UpdateCenter/main/ReplayFixerUpdater.xml"
+  }
+}

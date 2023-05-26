@@ -3,6 +3,7 @@ using ReplayFixer.Models.Data;
 using ReplayFixer.Models.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -49,28 +50,57 @@ namespace ReplayFixer.Models.Deserializers
                 // let's get that handshake!
                 if (replayHandshake.SequenceEqual(COH_IDS.COH__REC))
                 {
+                    // getting the date is a bit tricky, because there time may be of 24 hour format or 12 hours
+                    // first try to get it with meridian
+                    //var gameDate = new DateTime();
+                    var gameDate = string.Empty;    
+                    var ci = new CultureInfo("en-US");
+                    var formats = new[] { "dd/MM/yyyy HH:mm", "M-d-yyyy", "dd-MM-yyyy", "MM-dd-yyyy", "M.d.yyyy", "dd.MM.yyyy", "MM.dd.yyyy", "d/M/yyyy HH:MM", "d/M/yyyy H:m" }
+                            .Union(ci.DateTimeFormat.GetAllDateTimePatterns()).ToArray();
+
                     var postMeridiemIndex = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.PM);
                     var anteMeridiemIndex = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.AM);
+                    // what if date is not in a meridian format?
 
                     var validMeridiemPosition = 0;
-                    if (postMeridiemIndex > 0)
+                    // check if post meridiem and ante meridiem are less than 64 bytes
+                    // the problem is that there could be another date stored in the file
+                    // and surely the date we want to get is not after 64 bytes, it has to be closer that's how relic chunky files works
+                    if (postMeridiemIndex is > 0 and < 64)
                         validMeridiemPosition = postMeridiemIndex;
-                    else
+                    else if (anteMeridiemIndex is > 0 and < 64)
                         validMeridiemPosition = anteMeridiemIndex;
-                    var gameDate = new DateTime();
                     if (validMeridiemPosition > 0)
                     {
                         // get position until meridiem then grab the 3 bytes pertaining to post meridiem or ante meridiem with null in between the bytes
-                        gameDate = DateTime.Parse(Encoding.ASCII.GetString(bufferQueued.DequeueChunk(validMeridiemPosition + 3)
-                                                                                           .RemoveByteNulls()
-                                                                                       .ToArray()));
+                        /*gameDate = DateTime.Parse(Encoding.ASCII.GetString(bufferQueued
+                                .DequeueChunk(validMeridiemPosition + 3)
+                                .RemoveByteNulls()
+                                .ToArray()));*/
+                        gameDate = Encoding.ASCII.GetString(bufferQueued
+                                                  .DequeueChunk(validMeridiemPosition + 3)
+                                                  .RemoveByteNulls()
+                                                  .ToArray());
                     }
-                    // whenever there is a _ (discard) it will store unneccessary bytes
+                    else
+                    {
+                        // if this fails lets just get the next 32 bytes corresponding to the date
+                        /*gameDate = DateTime.ParseExact(Encoding.ASCII.GetString(bufferQueued.DequeueChunk(32)
+                            .RemoveByteNulls()
+                            .ToArray()), formats, ci);*/
+
+                        gameDate = Encoding.ASCII.GetString(bufferQueued.DequeueChunk(32)
+                            .RemoveByteNulls()
+                            .ToArray());
+
+                    }
+
+                // whenever there is a _ (discard) it will store unnecessary bytes
 
 
-                    // next we need relic chunky and 20 bytes not human readable behind it, included
-                    // so we store the position of the first relic chunky plus those 20 extra bytes behind relic chunky.
-                    int relicChunkyAndExtraPosition = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.RELIC_CHUNKY);
+                // next we need relic chunky and 20 bytes not human readable behind it, included
+                // so we store the position of the first relic chunky plus those 20 extra bytes behind relic chunky.
+                int relicChunkyAndExtraPosition = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.RELIC_CHUNKY);
 
                     // there are a couple bytes after we take the date that we don't need so we erase those based off the relic chunky
                     // we don't need to store trash
@@ -152,7 +182,7 @@ namespace ReplayFixer.Models.Deserializers
                         // from here we can explode the string
                         string[] explodedHeaderDATA = headerDATAString.Split('\\');
 
-                        // the map name is ussually in the last index so lets get it from the last index
+                        // the map name is usually in the last index so lets get it from the last index
                         mapName = explodedHeaderDATA.Last();
                     }
 

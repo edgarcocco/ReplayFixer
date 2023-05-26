@@ -11,16 +11,20 @@ namespace ReplayFixer.Models.Data
     [IgnoreEmptyLines]
     public class Replay
     {
-        [FieldHidden]
         public int ID { get; set; }
         public string FileName { get; set; } = string.Empty;
         public string FileDirectory { get; set; } = string.Empty;
         public string MapName { get; set; } = string.Empty;
+        public string MapNameCleaned => MapName.Replace("?", string.Empty);
         public string WorkshopFileName { get; set; } = string.Empty;
         public string WorkshopFileFullPath { get; set; } = string.Empty;
-
-        [FieldConverter(ConverterKind.Date, "MMddyyyy")]
-        public DateTime GameDate{ get; set; }
+        public string GameDate { get; set; } = string.Empty;
         public string FixerBytes { get; set; } = string.Empty;
+
+        public override string ToString()
+        {
+            return $"Map Name: {MapNameCleaned}\n" +
+                   $"Workshop File Name: {WorkshopFileName}";
+        }
     }
 }

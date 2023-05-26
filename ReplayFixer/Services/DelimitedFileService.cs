@@ -20,27 +20,19 @@ namespace ReplayFixer.Services
     public class DelimitedFileService<T> : IDelimitedFileService<T> where T : class
     {
         private readonly IServiceProvider _serviceProvider;
-
+        private readonly ILogger<DelimitedFileService<T>> _logger;
         private readonly FileHelperAsyncEngine<T> _fileHelperEngine;
-
         public event EventHandler<EventArgs> OnProgress;
         public event EventHandler<EventArgs> AfterReadRecord;
-
-        public T Current
-        {
-            get { return _fileHelperEngine.LastRecord; }
-        }
+        public T Current => _fileHelperEngine.LastRecord;
+        public ErrorManager ErrorManager => _fileHelperEngine.ErrorManager;
 
         // SOLUTION 1
         //public EventHandler<ProgressEventArgs> OnProgress { set => _fileHelperEngine.Progress += value; }
 
-
-        /// <summary>
-        /// Creates new instance and attaches the <see cref="IServiceProvider"/>.
-        /// </summary>
-        public DelimitedFileService(IServiceProvider serviceProvider)
+        public DelimitedFileService(ILogger<DelimitedFileService<T>> logger)
         {
-            _serviceProvider = serviceProvider;
+            _logger = logger;
             _fileHelperEngine = new FileHelperAsyncEngine<T>();
             _fileHelperEngine.Progress += _fileHelperEngine_Progress;
             _fileHelperEngine.AfterReadRecord += _fileHelperEngine_AfterReadRecord;
@@ -49,13 +41,13 @@ namespace ReplayFixer.Services
         private void _fileHelperEngine_AfterReadRecord(EngineBase engine, AfterReadEventArgs<T> e)
         {
             var handler = AfterReadRecord;
-            if (handler != null) AfterReadRecord(engine, e);
+            handler?.Invoke(engine, e);
         }
 
         private void _fileHelperEngine_Progress(object? sender, ProgressEventArgs e)
         {
             var handler = OnProgress;
-            if (handler != null) OnProgress(sender, e);
+            handler?.Invoke(sender, e);
         }
 
         public IDisposable BeginWriteFile(string path)=> _fileHelperEngine.BeginWriteFile(path); 
@@ -64,6 +56,6 @@ namespace ReplayFixer.Services
         public void WriteNext(T record) => _fileHelperEngine.WriteNext(record); 
         public T NextRecord() =>  _fileHelperEngine.ReadNext();
         public void Close() => _fileHelperEngine.Close();
-        public void Dispose() => this.Close();
+        public void Dispose() => Close();
     }
 }

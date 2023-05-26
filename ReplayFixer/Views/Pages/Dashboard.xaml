@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:fa="http://schemas.fontawesome.com/icons/svg"
       xmlns:fap="http://schemas.fontawesome.com/icons/svg/properties"
+      xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:ReplayFixer.Views.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -65,7 +66,15 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="2"  HorizontalAlignment="Right" Orientation="Horizontal">
-            <ui:Anchor Content="Created by Edo@CoHCommunity" Background="CornflowerBlue" NavigateUri="https://discord.gg/XP42RBd7" Icon="Link20" ui:IconForeground="White" Appearance="Primary" Foreground="White" />
+            <ui:Anchor Content="By Edo@CoHCommunity" ToolTip="Join Our Discord!" Background="CornflowerBlue" NavigateUri="https://discord.gg/XP42RBd7" Icon="Link48" ui:IconForeground="White" Appearance="Primary" Foreground="White" />
+            <ui:Anchor Content="Buy me a Tea" ToolTip="Cus I don't drink coffee..." Background="#DA5B6E" NavigateUri="https://ko-fi.com/edo1999" Icon="DrinkCoffee24" ui:IconForeground="White" Appearance="Primary" Foreground="White" />
+            <ui:Button ToolTip="About" Background="#EDAE4C" ui:Icon="QuestionCircle48" ui:IconForeground="White" Appearance="Primary" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                <behaviors:Interaction.Triggers>
+                    <behaviors:EventTrigger EventName="Click">
+                        <behaviors:InvokeCommandAction Command="{Binding ViewModel.OpenAboutDialogCommand}" />
+                    </behaviors:EventTrigger>
+                </behaviors:Interaction.Triggers>
+            </ui:Button>
         </StackPanel>
     </Grid>
 </ui:UiPage>

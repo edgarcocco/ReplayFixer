@@ -12,22 +12,13 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
-        Height="450" Width="800" AllowDrop="True">
+        Height="550" Width="800" AllowDrop="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ui:TitleBar
-            Title="Replay Fixer (v1.0)"
-            Grid.Row="0"
-            ForceShutdown="False"
-            MinimizeToTray="False"
-            ShowHelp="False"
-            ShowClose="True"
-            ShowMinimize="True"
-            UseSnapLayout="True" ShowMaximize="False" CanMaximize="False">
-        </ui:TitleBar>
+        
 
         <Grid x:Name="RootMainGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -97,5 +88,21 @@
                 </Grid>
             </Border>
         </Grid>
+        <ui:Dialog
+            x:Name="RootDialog"
+            Title="{Binding TitleBar}"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+             />
+        <ui:TitleBar
+            Title="{Binding TitleBar}"
+            Grid.Row="0"
+            ForceShutdown="False"
+            MinimizeToTray="False"
+            ShowHelp="False"
+            ShowClose="True"
+            ShowMinimize="True"
+            UseSnapLayout="True" ShowMaximize="False" CanMaximize="False">
+        </ui:TitleBar>
     </Grid>
 </ui:UiWindow>

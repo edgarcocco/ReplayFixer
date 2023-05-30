@@ -1,0 +1,11 @@
+Replay fixer output path to be able to open directory explorer, and remember path
+
+replay fixer drag and drop not working
+
+on step 2 add label to say open next map or something
+
+let it know that fixed was successful
+
+manually able to fix replay
+
+replay fixer icon

@@ -80,9 +80,10 @@
                         Title="Hello World!"
                         Grid.Row="1"
                         MaxWidth="600"
-                        Appearance="Secondary"
+                        Appearance="Primary"
                         CloseButtonEnabled="True"
                         Icon="PuzzlePiece24"
+                        Timeout="30000"
                         Message=""
                          />
                 </Grid>

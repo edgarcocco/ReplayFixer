@@ -1,5 +1,18 @@
-﻿1.0.1
-- Stream was left open after creating replays.data for the first time.
+﻿1.1.0 - 05/27/2023
+- Added snackbar notifications if file can't be fixed, and for when file has been successfully fixed or not.
+- Switched default .net host log, to serilog.
+- Rearranged interface
+- Added localization
+- Added icon to the app
+
+1.0.3 - 05/27/2023
+- Fixed drag & drop in the card to load the damaged replay.
+- Added button in the output path for directory explorer.
 
 1.0.2
-- Support new datetime format
+- Support new datetime format.
+
+1.0.1
+- Stream was left open after creating replays.data for the first time.
+
+

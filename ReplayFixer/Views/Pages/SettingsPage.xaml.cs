@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using ReplayFixer.Models.Helpers;
+using ReplayFixer.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +28,8 @@ namespace ReplayFixer.Views.Pages
     {
 
         public ObservableCollection<string> ThemeOptions;
+        public ObservableCollection<Environment.SpecialFolder> PreferedStartingPaths;
+
         public SettingsPage(IThemeService themeService, IOptions<AppConfig> options)
         {
             InitializeComponent();
@@ -39,6 +43,43 @@ namespace ReplayFixer.Views.Pages
                 themeService.SetTheme((ThemeType)Enum.Parse(typeof(ThemeType), themeString ?? "Light"));
             };
 
+            PreferedStartingPaths = new ObservableCollection<Environment.SpecialFolder>();
+            foreach (Environment.SpecialFolder specialFolder in Enum.GetValues(typeof(Environment.SpecialFolder)))
+            {
+                PreferedStartingPaths.Add(specialFolder);
+            }
+
+            preferedStartingPathComboBox.ItemsSource = PreferedStartingPaths;
+            preferedStartingPathComboBox.SelectedItem = options.Value.PreferedStartingPath;
+            preferedStartingPathComboBox.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+            {
+                Environment.SpecialFolder specialFolder = (Environment.SpecialFolder)(sender as ComboBox)?.SelectedItem;
+                options.Value.PreferedStartingPath = specialFolder;
+            };
+
+            languageOptionsComboBox.ItemsSource = new ObservableCollection<string> { "English", "Español" } ;
+            switch (options.Value.Language)
+            {
+                case "en-US":
+                    languageOptionsComboBox.SelectedItem = "English";
+                    break;
+                case "es-DO":
+                    languageOptionsComboBox.SelectedItem = "Español";
+                    break;
+
+            }
+            languageOptionsComboBox.SelectedItem = options.Value.Language;
+
+            languageOptionsComboBox.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+            {
+                if (sender is ComboBox) {
+                    if ((sender as ComboBox).SelectedItem == "English")
+                        options.Value.Language = "en-US";
+                    else if ((sender as ComboBox).SelectedItem == "Español")
+                        options.Value.Language = "es-DO";
+                }
+                SettingsHelpers.AddOrUpdateAppSetting("AppConfig:Language", options.Value.Language);
+            };
         }
     }
 }

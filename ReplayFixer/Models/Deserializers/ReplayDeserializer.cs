@@ -192,7 +192,7 @@ namespace ReplayFixer.Models.Deserializers
                     // so we look up for the index of that folder in the RelicCoH chunk
                     var usersIndex = HelperMethods.SearchFirst(firstRelicCOHQueued.ToArray(), COH_IDS.USERS);
 
-                    // now wee need to store 4 bytes behind C:\Users these 4 bytes will help fix the replay as well
+                    // now we need to store 4 bytes behind C:\Users these 4 bytes will help fix the replay as well
                     var bytesBehindDiskDriveIndex = (usersIndex - 4) - 4;
                     // remove all the bytes behind the data that we want to extract next
                     _ = firstRelicCOHQueued.DequeueChunk(bytesBehindDiskDriveIndex).ToArray();
@@ -202,7 +202,7 @@ namespace ReplayFixer.Models.Deserializers
                     byte[] workshopFileFullPathBuffer = firstRelicCOHQueued.ToArray();
                     workshopFileFullPath = Encoding.ASCII.GetString(firstRelicCOHQueued.RemoveByteNulls().ToArray());
                     // we can extract the workshop file name by using a simple digit regex that ends in a .sga extension
-                    Match match = Regex.Match(workshopFileFullPath, "([0-9]+).sga");
+                    Match match = Regex.Match(workshopFileFullPath, HelperMethods.ValidSGAExpression);//"(([0-9]+)|([a-zA-Z ]+)).sga");
                     if(match.Success)
                         workshopFileName = match.Value;
                     Replay replay = new Replay()

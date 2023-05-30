@@ -21,25 +21,37 @@ using ReplayFixer.Models.Deserializers;
 using Microsoft.Extensions.Options;
 using ReplayFixer.Views.UserControls;
 using Wpf.Ui.Controls.Interfaces;
+using System.Windows.Forms;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using FolderBroserDialog = System.Windows.Forms;
+using DragEventArgs = System.Windows.DragEventArgs;
+using Microsoft.Xaml.Behaviors.Core;
+using System.Configuration;
+using ReplayFixer.Services;
+using System.Threading;
 
 namespace ReplayFixer.ViewModels
 {
     public class MethodOneViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
+        private readonly ISnackbarService _snackbarService;
         private readonly IDelimitedFileService<Replay> _replayDelimitedFileService;
         private readonly ILogger<MethodOneViewModel> _logger;
         private readonly IOptions<AppConfig> _options;
 
+        private readonly MessageService _messageService;
+        public MessageService MessageService { get { return _messageService; } }
+
         private OpenFileDialog _recOpenFileDialog;
+        private FolderBrowserDialog _folderBrowserDialog;
         private readonly IDialogControl _dialogControl;
 
         public ICommand NavigateCommand => new RelayCommand<Type>(OnNavigate);
-        public ICommand OnFileDropCommand =>  new RelayCommand<string>(execute: ReplayToFixCardMouseDown);
+        public ICommand OnFileDropCommand =>  new RelayCommand<DragEventArgs>(execute: OnDropReplayToFixCard);
         public ICommand OpenFileDialogCommand => new RelayCommand<string>(execute: OpenFileDialogRouter);
+        public ICommand OpenFolderDialogCommand => new RelayCommand<string>(execute: OpenFolderDialogRouter);
         public ICommand ViewReplayWindowCommand => new RelayCommand<Replay>(OpenReplayMessageBox);
-
-       
 
         private int _fileOperationProgress = 0;
         public int FileOperationProgress { get => _fileOperationProgress; set => SetProperty(ref _fileOperationProgress, value); }
@@ -72,22 +84,33 @@ namespace ReplayFixer.ViewModels
             set => SetProperty(ref _replayToFixStatus, value);
         }
         public MethodOneViewModel(INavigationService navigationService,
+            ISnackbarService snackbarService,
             IDialogService dialogService, 
             IDelimitedFileService<Replay> replayDelimitedFileService,
             ILogger<MethodOneViewModel> logger,
-            IOptions<AppConfig> options)
+            IOptions<AppConfig> options,
+           MessageService messageService)
         {
             _navigationService = navigationService;
             _replayDelimitedFileService = replayDelimitedFileService;
             _logger = logger;
             _options = options;
             _dialogControl = dialogService.GetDialogControl();
+            _snackbarService = snackbarService;
+            _messageService = messageService;
+            this.Initialize(options);
+        }
+
+        public void Initialize(IOptions<AppConfig> options)
+        {
 
             _recOpenFileDialog = new OpenFileDialog
             {
-                Filter = "replay file (*.rec)|*.rec"
+                Filter = "replay file (*.rec)|*.rec",
+                InitialDirectory = Environment.GetFolderPath(options.Value.PreferedStartingPath)
             };
-
+            
+            _folderBrowserDialog = new FolderBrowserDialog() { RootFolder = options.Value.PreferedStartingPath };
             _replayDelimitedFileService.OnProgress += (sender, eventArgs) =>
             {
                 if (sender is null)
@@ -96,12 +119,15 @@ namespace ReplayFixer.ViewModels
                 FileOperationProgress = (int)progressEventArgs.Percent;
             };
 
+            ReplayToFixStatus = _messageService.MethodOneStep2Body;
+
 
             Task.Run(() =>
             {
                 LoadWorkingReplays(new Progress<bool>(isLoading =>
                         IsLoadingWorkingReplays = isLoading));
             });
+
         }
 
         private async void LoadWorkingReplays(IProgress<bool> completionNotification)
@@ -167,6 +193,25 @@ namespace ReplayFixer.ViewModels
             }
         }
 
+        public void OpenFolderDialogRouter(string? methodName)
+        {
+            _logger.LogInformation($"Action called: {HelperMethods.GetCurrentMethod()}");
+
+            _folderBrowserDialog.ShowNewFolderButton = true;
+            // Show the FolderBrowserDialog.  
+            DialogResult result = _folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if (methodName != null)
+                {
+                    MethodInfo? dynMethod = this.GetType().GetMethod(methodName,
+                        BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (dynMethod != null) dynMethod.Invoke(this, new object[] { _folderBrowserDialog.SelectedPath });
+                }
+            }
+
+        }
+
         private void OpenFileDialogWorkingReplay(string? fileName)
         {
             LastWorkingReplayLoaded = fileName;
@@ -192,22 +237,47 @@ namespace ReplayFixer.ViewModels
             }
 
         }
+
+        public void OnDropReplayToFixCard(DragEventArgs? eventArgs)
+        {
+            _logger.LogInformation($"{HelperMethods.GetCurrentMethod()}: OnDrop event called");
+            var fileName = (eventArgs.Data?.GetData(DataFormats.FileDrop, false) as string[])?.FirstOrDefault();
+            if (fileName == null)
+                _logger.LogInformation($"{HelperMethods.GetCurrentMethod()}: OnDrop event but dropped filename was null");
+            else
+                this.ReplayToFixCardMouseDown(fileName);
+        }
         private void ReplayToFixCardMouseDown(string fileName)
         {
-            var fileDroppedPath = fileName;//(eventArgs.Data.GetData(DataFormats.FileDrop, false) as string[])?.FirstOrDefault();
+            var fileDroppedPath = fileName;
             try
             {
                 if (fileDroppedPath != null)
                 {
                     using var stream = File.Open(fileDroppedPath, FileMode.Open);
                     ReplayToFix = ReplayDeserializer.FromStream(stream);
-                    ReplayToFixStatus = "Replay Loaded \n\n"+ReplayToFix+"\n";
+                    ReplayToFixStatus = "Replay Loaded \n\n" + ReplayToFix + "\n";
 
+                    bool weCanFixIt = false;
+                    foreach (Replay replayFixer in WorkingReplaysList)
+                    {
+                        replayFixer.CanFixCurrentDamagedReplay = "No";
+                        if (ReplayToFix.WorkshopFileName == replayFixer.WorkshopFileName)
+                        {
+                            replayFixer.CanFixCurrentDamagedReplay = "Yes";
+                            weCanFixIt = true;
+                        }
+                    }
+                    OnPropertyChanged(nameof(WorkingReplaysList));
                     //var sourceCard = (Card)eventArgs.Source;
                     //sourceCard.Content = replayCard;
 
-                    EnableFixSection = true;
-                    OutputPath = ReplayToFix.FileDirectory;
+                    if (weCanFixIt)
+                        EnableFixSection = true;
+                    else { EnableFixSection = false; _snackbarService.Show("Error", "Couldn't find a working replay in the list, to fix this replay. Please check your loaded working replays list (Step 1)", Wpf.Ui.Common.SymbolRegular.Warning12, Wpf.Ui.Common.ControlAppearance.Caution); }
+
+                    if(OutputPath == string.Empty)
+                        OutputPath = Environment.GetFolderPath(_options.Value.PreferedStartingPath);//ReplayToFix.FileDirectory;
                     var fileNameExploded = ReplayToFix.FileName.Split('.');
                     fileNameExploded[0] += "-fixed";
 
@@ -219,19 +289,28 @@ namespace ReplayFixer.ViewModels
                 _logger.LogError(e, $"{HelperMethods.GetCurrentMethod()} reported an exception: {e.Message}");
             }
         }
+        private void OnOutputPathReceived(string fileName)
+        {
+            this.OutputPath = fileName;
+        }
+
         private void OpenReplayMessageBox(Replay? replay)
         {
             var messageBox = new Wpf.Ui.Controls.MessageBox();
 
             var content = replay.ToString();
             messageBox.ShowFooter = false;
-            messageBox.Show("Replay Card", content);
+            messageBox.Focusable = true;
+            messageBox.Content = content;
+            messageBox.ShowDialog();
         }
 
         public void OnFixReplayClick()
         {
             Replay? suitableReplay = null;
-            foreach(Replay workingReplay in workingReplaysList)
+            var messageBox = new Wpf.Ui.Controls.MessageBox();
+
+            foreach (Replay workingReplay in workingReplaysList)
             {
                 if(workingReplay.WorkshopFileName == ReplayToFix.WorkshopFileName)
                 {
@@ -242,6 +321,7 @@ namespace ReplayFixer.ViewModels
 
             if (suitableReplay == null)
             {
+                _snackbarService.Show("Error", "Couldn't find a working replay in the list, to fix this replay. Please check your loaded working replays list (Step 1)", Wpf.Ui.Common.SymbolRegular.Warning12, Wpf.Ui.Common.ControlAppearance.Danger);
                 _logger.LogInformation($"{HelperMethods.GetCurrentMethod()}: No suitable replay found to fix given replay. ");
                 return;
             }
@@ -298,7 +378,14 @@ namespace ReplayFixer.ViewModels
                 {
                     using var writer = new BinaryWriter(File.OpenWrite(destinationFullPath));
                     writer.Write(fixedReplayBuffer);
+                    _snackbarService.Show("Success", "Successfully fixed the replay.", Wpf.Ui.Common.SymbolRegular.Check24, Wpf.Ui.Common.ControlAppearance.Success);
+
                 }
+            }
+            else
+            {
+                _snackbarService.Show("Error", "There was a file version mismatch, please make sure the working replay being used and the loaded map replay use the same map files.", Wpf.Ui.Common.SymbolRegular.Warning12, Wpf.Ui.Common.ControlAppearance.Danger);
+                _logger.LogInformation($"{HelperMethods.GetCurrentMethod()}: damaged replay and working replay length mismatch. ");
             }
         }
 

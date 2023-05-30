@@ -11,6 +11,7 @@
                 <ui:ThemesDictionary Theme="Light" />
                 <ui:ControlsDictionary />
                 <ResourceDictionary Source="Models/Dictionaries/DataTemplates.xaml"/>
+                <ResourceDictionary Source="Models/Dictionaries/ControlTemplates.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
         </ResourceDictionary>

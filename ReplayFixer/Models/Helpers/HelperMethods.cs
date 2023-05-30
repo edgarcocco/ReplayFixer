@@ -5,11 +5,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace ReplayFixer.Models.Helpers
 {
     public static class HelperMethods
     {
+        public static string ValidSGAExpression = @"(([0-9a-zA-Z -._!`'#%&,:;<>=@{}~\$\(\)\*\+\/\[\]\^\|]+)).sga";
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static string GetCurrentMethod()
         {

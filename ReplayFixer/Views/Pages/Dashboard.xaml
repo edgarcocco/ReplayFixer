@@ -22,59 +22,81 @@
             <StackPanel CanVerticallyScroll="True">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Info20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0" />
-                    <TextBlock FontWeight="Medium" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorPrimaryBrush}">COH 1 Replay Fixer</TextBlock>
+                    <TextBlock  FontWeight="Medium" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorPrimaryBrush}">COH 1 Replay Fixer</TextBlock>
                 </StackPanel>
-                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorPrimaryBrush}" >This software will attempt to fix a replay with a custom map in it, below we will list all the available methods to do that.</TextBlock>
+                <TextBlock Text="{Binding ViewModel.MessageService.HomeMainMessage}" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorPrimaryBrush}" ></TextBlock>
             </StackPanel>
         </Border>
-        <ScrollViewer Grid.Row="1" >
-            <StackPanel Margin="5" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <ui:CardAction
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Column="0" >
+                <StackPanel Margin="5" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Center">
+                    <ui:CardAction
                 Command="{Binding ViewModel.NavigateCommand}"
                 CommandParameter="{x:Type local:MethodOnePage}"
                 Icon="Toolbox28"
                 IsChevronVisible="True">
-                    <StackPanel>
-                        <TextBlock
+                        <StackPanel>
+                            <TextBlock
                         Margin="0"
                         FontSize="13"
                         FontWeight="Medium"
-                        Text="1. Fix with working Replay" />
-                        <TextBlock
+                        Text="{Binding ViewModel.MessageService.HomeMethodOneTitle}" />
+                            <TextBlock
                         FontSize="12"
                         Foreground="{DynamicResource TextFillColorTertiaryBrush}"
                         TextWrapping="Wrap"
-                        Text="This method utilizes a working replay file with the same custom map to fix the non-working one." />
-                    </StackPanel>
-                </ui:CardAction>
-                <ui:CardAction
-                Icon="Toolbox28"
-                IsEnabled="False"
-                IsChevronVisible="True">
-                    <StackPanel>
-                        <TextBlock
-                        Margin="0"
-                        FontSize="13"
-                        FontWeight="Medium"
-                        Text="Coming Soon" />
-                        <TextBlock
-                        FontSize="12"
-                        Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                        Text="TBD" />
-                    </StackPanel>
-                </ui:CardAction>
-            </StackPanel>
-        </ScrollViewer>
-        <StackPanel Grid.Row="2"  HorizontalAlignment="Right" Orientation="Horizontal">
-            <ui:Anchor Content="By Edo@CoHCommunity" ToolTip="Join Our Discord!" Background="CornflowerBlue" NavigateUri="https://discord.gg/XP42RBd7" Icon="Link48" ui:IconForeground="White" Appearance="Primary" Foreground="White" />
-            <ui:Anchor Content="Buy me a Tea" ToolTip="Cus I don't drink coffee..." Background="#DA5B6E" NavigateUri="https://ko-fi.com/edo1999" Icon="DrinkCoffee24" ui:IconForeground="White" Appearance="Primary" Foreground="White" />
-            <ui:Button ToolTip="About" Background="#EDAE4C" ui:Icon="QuestionCircle48" ui:IconForeground="White" Appearance="Primary" Foreground="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                <behaviors:Interaction.Triggers>
-                    <behaviors:EventTrigger EventName="Click">
-                        <behaviors:InvokeCommandAction Command="{Binding ViewModel.OpenAboutDialogCommand}" />
-                    </behaviors:EventTrigger>
-                </behaviors:Interaction.Triggers>
-            </ui:Button>
-        </StackPanel>
+                        Text="{Binding ViewModel.MessageService.HomeMethodOneBody}"/>
+                        </StackPanel>
+                    </ui:CardAction>
+                </StackPanel>
+
+            </ScrollViewer>
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.ColumnSpan="2">
+                    <TextBlock>Changelogs</TextBlock>
+                    <TextBox MaxHeight="150" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" Text="{Binding ViewModel.ChangelogText}"></TextBox>
+                </StackPanel>
+                <ui:Anchor Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Top"  ToolTip="Join Our Discord!" Background="CornflowerBlue" NavigateUri="https://discord.gg/XP42RBd7"  Appearance="Primary" Foreground="White" Height="88" Width="119" Icon="Empty">
+                    <ui:Anchor.Content>
+                        <StackPanel Orientation="Vertical">
+                            <ui:SymbolIcon Symbol="Link48" Foreground="White" />
+                            <TextBlock FontSize="8.6" Text="{Binding ViewModel.MessageService.InfoMadeBy}" />
+                        </StackPanel>
+                    </ui:Anchor.Content>
+                </ui:Anchor>
+                <ui:Anchor Grid.Row="2" VerticalAlignment="Top" Grid.Column="1" ToolTip="Cus I don't drink coffee..." Background="#DA5B6E" NavigateUri="https://ko-fi.com/edo1999" Appearance="Primary" Foreground="White" Height="88" Width="118" Icon="Empty" >
+                    <ui:Anchor.Content>
+                        <StackPanel Orientation="Vertical">
+
+                            <ui:SymbolIcon Symbol="DrinkCoffee24" Foreground="White" />
+                            <TextBlock FontSize="10" Text="{Binding ViewModel.MessageService.InfoDonate}" />
+                        </StackPanel>
+                    </ui:Anchor.Content>
+
+                </ui:Anchor>
+                <ui:Button Grid.Row="3"  Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" ToolTip="About" Background="#EDAE4C" ui:Icon="QuestionCircle48" ui:IconForeground="White" Appearance="Primary" Foreground="White" Height="88" Width="118" >
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="Click">
+                            <behaviors:InvokeCommandAction Command="{Binding ViewModel.OpenAboutDialogCommand}" />
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </ui:Button>
+            </Grid>
+        </Grid>
+
     </Grid>
 </ui:UiPage>

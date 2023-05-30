@@ -11,33 +11,44 @@
 
     <!-- Commands depends on the MethodOnePage.ViewModel to work, we need to find a general way to create callbacks that way theses commands can work in any page -->
     <DataTemplate x:Key="ReplayListViewTemplate" DataType="{x:Type data:Replay}">
-        <StackPanel Orientation="Horizontal">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".2*" />
+                <ColumnDefinition Width=".8*" />
+                <ColumnDefinition Width=".4*" />
+                <ColumnDefinition Width=".4*" />
+            </Grid.ColumnDefinitions>
+
+
             <behaviors:Interaction.Triggers>
                 <behaviors:EventTrigger EventName="MouseDown">
                     <behaviors:InvokeCommandAction Command="{Binding ViewModel.ViewReplayWindowCommand , RelativeSource={RelativeSource AncestorType={x:Type pages:MethodOnePage}} }"
                                                    CommandParameter="{Binding}" />
                 </behaviors:EventTrigger>
             </behaviors:Interaction.Triggers>
-            <TextBlock Margin="5,0" Text="{Binding Path=ID, StringFormat={}{0}.}" />
-            <TextBlock Width="225" TextTrimming="CharacterEllipsis" Margin="5,0" Text="{Binding Path=MapNameCleaned}" />
-            <ui:Button Padding="0" Margin="5,0" Icon="ZoomIn20" Appearance="Transparent">
-                <behaviors:Interaction.Triggers>
-                    <behaviors:EventTrigger EventName="Click">
-                        <behaviors:InvokeCommandAction 
+            <TextBlock Grid.Column="0" Text="{Binding Path=ID, StringFormat={}{0}.}" />
+            <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding Path=MapNameCleaned}" />
+            <TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" Text="{Binding Path=CanFixCurrentDamagedReplay}" />
+            <StackPanel Grid.Column="3" Orientation="Horizontal">
+                <ui:Button Padding="0" Icon="ZoomIn20" Appearance="Transparent">
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="Click">
+                            <behaviors:InvokeCommandAction 
                             Command="{Binding ViewModel.ViewReplayWindowCommand, RelativeSource={RelativeSource AncestorType={x:Type pages:MethodOnePage}} }"
                        CommandParameter="{Binding}" />
-                    </behaviors:EventTrigger>
-                </behaviors:Interaction.Triggers>
-            </ui:Button>
-            <ui:Button Visibility="Hidden" Padding="0" Margin="5,0" Icon="BinFull20" IconForeground="Gray" IsEnabled="False">
-                <behaviors:Interaction.Triggers>
-                    <behaviors:EventTrigger EventName="Click">
-                        <behaviors:InvokeCommandAction
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </ui:Button>
+                <ui:Button Visibility="Visible" Padding="0"  Icon="BinFull20" IconForeground="Red" IsEnabled="False">
+                    <behaviors:Interaction.Triggers>
+                        <behaviors:EventTrigger EventName="Click">
+                            <behaviors:InvokeCommandAction
                         Command="{Binding ViewModel.ViewReplayWindowCommand , RelativeSource={RelativeSource AncestorType={x:Type pages:MethodOnePage}} }" 
                         CommandParameter="{Binding}" />
-                    </behaviors:EventTrigger>
-                </behaviors:Interaction.Triggers>
-            </ui:Button>
-        </StackPanel>
+                        </behaviors:EventTrigger>
+                    </behaviors:Interaction.Triggers>
+                </ui:Button>
+            </StackPanel>
+        </Grid>
     </DataTemplate>
 </ResourceDictionary>

@@ -29,7 +29,7 @@ namespace ReplayFixer.Views
     {
 
         public string TitleBar { get; set; }
-        public Container(INavigationService navigationService, IPageService pageService, IDialogService dialogService,IOptions<AppConfig> options)
+        public Container(INavigationService navigationService, IPageService pageService, ISnackbarService snackbarService, IDialogService dialogService,IOptions<AppConfig> options)
         {
             DataContext = this;
             this.TitleBar = $"Replay Fixer {Assembly.GetExecutingAssembly().GetName().Version.ToString(3)}";
@@ -37,6 +37,7 @@ namespace ReplayFixer.Views
             SetPageService(pageService);
             navigationService.SetNavigationControl(RootNavigation);
             dialogService.SetDialogControl(RootDialog);
+            snackbarService.SetSnackbarControl(RootSnackbar);
             Loaded += Container_Loaded;
         }
 

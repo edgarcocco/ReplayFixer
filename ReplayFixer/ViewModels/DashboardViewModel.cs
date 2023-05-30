@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using ReplayFixer.Models.Helpers;
 using ReplayFixer.Services;
 using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Controls.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
 using Wpf.Ui.Mvvm.Services;
-
 namespace ReplayFixer.ViewModels
 {
     public class DashboardViewModel : ObservableObject, INavigationAware
@@ -24,6 +26,9 @@ namespace ReplayFixer.ViewModels
 
         private readonly MessageService _messageService;
         private readonly IDialogControl _dialogControl;
+        public string ChangelogText{ get => _changelogText; set => SetProperty(ref _changelogText, value); }
+        private string _changelogText= string.Empty;
+
 
         public MessageService MessageService { get { return _messageService; } }
 
@@ -64,6 +69,18 @@ namespace ReplayFixer.ViewModels
             _logger = logger;
             _messageService = messageService;
             _dialogControl = dialogService.GetDialogControl();
+            this.Initialize();
+        }
+
+        private void Initialize()
+        {
+            try
+            {
+                ChangelogText = File.ReadAllText("changelog.txt");
+            } catch(Exception ex)
+            {
+                _logger.LogError($"{HelperMethods.GetCurrentMethod()}: Error trying to read changelog file: {ex.Message}");
+            }
         }
         public void OnNavigatedFrom()
         {

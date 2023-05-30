@@ -10,6 +10,7 @@ namespace ReplayFixer
     public class AppConfig
     {
         public string? Theme { get; set; }
+        public Environment.SpecialFolder PreferedStartingPath { get; set; } = Environment.SpecialFolder.MyDocuments;
         public string? Language { get; set; }
         public string? ReplayDatabase { get; set; }
         public string? GithubPat { get; set; }

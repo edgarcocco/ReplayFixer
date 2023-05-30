@@ -13,11 +13,31 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <StackPanel>
-            <StackPanel Orientation="Vertical">
-                <TextBlock VerticalAlignment="Center" FontSize="16">Theme: </TextBlock>
-                <ComboBox x:Name="themeOptionsComboBox"></ComboBox>
-            </StackPanel>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+            <GroupBox>
+                <GroupBox.Header>
+                    <TextBlock>General</TextBlock>
+                </GroupBox.Header>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock VerticalAlignment="Center" FontSize="16">Theme:</TextBlock>
+                    <ComboBox x:Name="themeOptionsComboBox"></ComboBox>
+                    <Separator />
+                    <TextBlock VerticalAlignment="Center" FontSize="16">Prefered Starting Path:</TextBlock>
+                    <ComboBox x:Name="preferedStartingPathComboBox"></ComboBox>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Grid.Column="1">
+                <GroupBox.Header>
+                    <TextBlock>Localization</TextBlock>
+                </GroupBox.Header>
+                <StackPanel Orientation="Vertical">
+                <TextBlock Foreground="Red">*Note: For any localization changes please restart the app.</TextBlock>
+                <TextBlock VerticalAlignment="Center" FontSize="16">Language:</TextBlock>
+                    <ComboBox x:Name="languageOptionsComboBox"></ComboBox>
+                </StackPanel>
+            </GroupBox>
     </Grid>
 </Page>

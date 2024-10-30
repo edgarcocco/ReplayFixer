@@ -1,9 +1,15 @@
-﻿1.1.0 - 05/27/2023
+﻿1.2.0 - 10/30/2024
+- Problem when fixing a replay caused by the delimiter $ already appearing in the replay data to fix.
+  Changed delimiter from '$' to ',' if you still having issues you can set your own delimiter on the settings page.
+- Updated main dashboard layout.
+
+1.1.0 - 05/27/2023
 - Added snackbar notifications if file can't be fixed, and for when file has been successfully fixed or not.
 - Switched default .net host log, to serilog.
 - Rearranged interface
 - Added localization
 - Added icon to the app
+- Working replays list updated, now replays tell user if it can fix the damaged replay.
 
 1.0.3 - 05/27/2023
 - Fixed drag & drop in the card to load the damaged replay.

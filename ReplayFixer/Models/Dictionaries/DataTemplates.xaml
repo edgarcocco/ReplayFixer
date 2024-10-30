@@ -20,12 +20,12 @@
             </Grid.ColumnDefinitions>
 
 
-            <behaviors:Interaction.Triggers>
+            <!--<behaviors:Interaction.Triggers>
                 <behaviors:EventTrigger EventName="MouseDown">
                     <behaviors:InvokeCommandAction Command="{Binding ViewModel.ViewReplayWindowCommand , RelativeSource={RelativeSource AncestorType={x:Type pages:MethodOnePage}} }"
                                                    CommandParameter="{Binding}" />
                 </behaviors:EventTrigger>
-            </behaviors:Interaction.Triggers>
+            </behaviors:Interaction.Triggers>-->
             <TextBlock Grid.Column="0" Text="{Binding Path=ID, StringFormat={}{0}.}" />
             <TextBlock Grid.Column="1" TextTrimming="CharacterEllipsis" Text="{Binding Path=MapNameCleaned}" />
             <TextBlock Grid.Column="2" TextTrimming="CharacterEllipsis" Text="{Binding Path=CanFixCurrentDamagedReplay}" />
@@ -39,11 +39,11 @@
                         </behaviors:EventTrigger>
                     </behaviors:Interaction.Triggers>
                 </ui:Button>
-                <ui:Button Visibility="Visible" Padding="0"  Icon="BinFull20" IconForeground="Red" IsEnabled="False">
+                <ui:Button Visibility="Visible" Padding="0"  Icon="Eraser24" IconForeground="Red" IsEnabled="True">
                     <behaviors:Interaction.Triggers>
                         <behaviors:EventTrigger EventName="Click">
                             <behaviors:InvokeCommandAction
-                        Command="{Binding ViewModel.ViewReplayWindowCommand , RelativeSource={RelativeSource AncestorType={x:Type pages:MethodOnePage}} }" 
+                        Command="{Binding ViewModel.DeleteWorkingReplayCommand, RelativeSource={RelativeSource AncestorType={x:Type pages:MethodOnePage}} }" 
                         CommandParameter="{Binding}" />
                         </behaviors:EventTrigger>
                     </behaviors:Interaction.Triggers>

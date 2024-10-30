@@ -52,6 +52,8 @@ namespace ReplayFixer.ViewModels
         public ICommand OpenFileDialogCommand => new RelayCommand<string>(execute: OpenFileDialogRouter);
         public ICommand OpenFolderDialogCommand => new RelayCommand<string>(execute: OpenFolderDialogRouter);
         public ICommand ViewReplayWindowCommand => new RelayCommand<Replay>(OpenReplayMessageBox);
+        public ICommand DeleteWorkingReplayCommand => new RelayCommand<Replay>(DeleteWorkingReplay);
+
 
         private int _fileOperationProgress = 0;
         public int FileOperationProgress { get => _fileOperationProgress; set => SetProperty(ref _fileOperationProgress, value); }
@@ -147,6 +149,7 @@ namespace ReplayFixer.ViewModels
                         {
                             try
                             {
+                                // Try while(.NextRecord) and .Current to fix this
                                 nextReplay = _replayDelimitedFileService.NextRecord();
                                 // this looks dirty double null check should be removed
                                 if (nextReplay == null) continue;
@@ -220,7 +223,7 @@ namespace ReplayFixer.ViewModels
             {
                 using (FileStream stream = File.Open(LastWorkingReplayLoaded, FileMode.Open))
                 {
-                    Replay replay = ReplayDeserializer.FromStream(stream);
+                    Replay replay = ReplayDeserializer.FromStream(stream, _options.Value.Delimiter);
                     replay.ID = _replayIds++;
                     using (_replayDelimitedFileService.BeginAppendToFile(_options.Value.ReplayDatabase))
                     {
@@ -255,7 +258,7 @@ namespace ReplayFixer.ViewModels
                 if (fileDroppedPath != null)
                 {
                     using var stream = File.Open(fileDroppedPath, FileMode.Open);
-                    ReplayToFix = ReplayDeserializer.FromStream(stream);
+                    ReplayToFix = ReplayDeserializer.FromStream(stream, _options.Value.Delimiter);
                     ReplayToFixStatus = "Replay Loaded \n\n" + ReplayToFix + "\n";
 
                     bool weCanFixIt = false;
@@ -304,6 +307,35 @@ namespace ReplayFixer.ViewModels
             messageBox.Content = content;
             messageBox.ShowDialog();
         }
+        private void DeleteWorkingReplay(Replay? replay)
+        {
+            try
+            {
+                if (replay != null && _options.Value.ReplayDatabase != null)
+                {
+                    var tempFile = Path.GetTempFileName();
+                    var linesToKeep = File.ReadLines(_options.Value.ReplayDatabase).Where(l => !l.StartsWith(replay?.ID.ToString() + "|"));
+
+                    File.WriteAllLines(tempFile, linesToKeep);
+
+                    File.Delete(_options.Value.ReplayDatabase);
+                    File.Move(tempFile, _options.Value.ReplayDatabase);
+
+                    if(WorkingReplaysList.Count > 0) {
+                        WorkingReplaysList.Remove(replay);
+                        OnPropertyChanged(nameof(WorkingReplaysList));
+                    }
+                } else
+                {
+                    _logger.LogInformation($"{HelperMethods.GetCurrentMethod()} either the replay was null or no replay database was found");
+                }
+            }
+            catch (Exception e)
+            {
+                _snackbarService.Show("Error", "Couldn't delete the file (check the debug.log for more information).", Wpf.Ui.Common.SymbolRegular.Warning24, Wpf.Ui.Common.ControlAppearance.Danger);
+                _logger.LogError(e, $"{HelperMethods.GetCurrentMethod()} reported an exception: {e.Message}");
+            }
+        }
 
         public void OnFixReplayClick()
         {
@@ -327,9 +359,9 @@ namespace ReplayFixer.ViewModels
             }
 
             var workingReplayBytes = Convert.FromBase64String(suitableReplay.FixerBytes)
-                                            .SplitBy(i => i == 0x24).ToArray();
+                                            .SplitBy(i => i == _options.Value.Delimiter).ToArray();
             var damagedReplayBytes = Convert.FromBase64String(ReplayToFix.FixerBytes)
-                                            .SplitBy(i => i == 0x24).ToArray();
+                                            .SplitBy(i => i == _options.Value.Delimiter).ToArray();
 
             // make sure both replays contains the same length of data extracted
             if(workingReplayBytes.Length == damagedReplayBytes.Length)

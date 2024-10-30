@@ -15,5 +15,6 @@ namespace ReplayFixer
         public string? ReplayDatabase { get; set; }
         public string? GithubPat { get; set; }
         public string? AutoUpdaterFile { get; set; }
+        public byte Delimiter { get; set; } = 0x2c;
     }
 }

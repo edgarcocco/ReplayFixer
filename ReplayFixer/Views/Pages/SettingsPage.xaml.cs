@@ -80,6 +80,22 @@ namespace ReplayFixer.Views.Pages
                 }
                 SettingsHelpers.AddOrUpdateAppSetting("AppConfig:Language", options.Value.Language);
             };
+
+            delimiterTextBox.Text = Encoding.UTF8.GetString(new byte[] { options.Value.Delimiter });
+            delimiterTextBox.TextChanged += (object sender, TextChangedEventArgs e) =>
+            {
+                if (sender is TextBox)
+                {
+                    var delimiter = (sender as TextBox).Text;
+                    if (delimiter.Length > 0)
+                    {
+                        options.Value.Delimiter = Encoding.UTF8.GetBytes(delimiter)[0];
+                        delimiterHexTextBox.Text = "0x" + options.Value.Delimiter.ToString("X2");
+                        SettingsHelpers.AddOrUpdateAppSetting("AppConfig:Delimiter", options.Value.Delimiter.ToString());
+                    }
+                }
+            };
+            delimiterHexTextBox.Text = "0x"+options.Value.Delimiter.ToString("X2");
         }
     }
 }

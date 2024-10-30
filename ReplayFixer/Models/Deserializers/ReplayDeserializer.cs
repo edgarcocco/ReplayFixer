@@ -16,6 +16,11 @@ namespace ReplayFixer.Models.Deserializers
     {
         public static Replay FromStream(Stream stream)
         {
+            return FromStream(stream, 0x24);
+        }
+
+        public static Replay FromStream(Stream stream, byte byteDelimiter)
+        {
             // start by trying to get the file name trying to cast the stream to filestream
 
             string fileName = string.Empty;
@@ -30,7 +35,12 @@ namespace ReplayFixer.Models.Deserializers
             using (BinaryReader reader = new BinaryReader(stream))
             {
                 byte[] buffer = reader.ReadBytes((int)stream.Length);
-                IEnumerable<byte> delimiter = new byte[] { 0x24 };
+                // delimiter $ is used to separate chunks of data
+                //IEnumerable<byte> delimiter = new byte[] { 0x24 };
+                // delimiter * is used to separate chunks of data
+                // changed to this delimiter
+                IEnumerable<byte> delimiter = new byte[] { byteDelimiter };
+
                 //IEnumerable<byte> bufferCleaned = buffer.Select(x => x).Where(x => x != 0);
 
                 // we copy the buffer of the replay file to initialize a queue collection
@@ -53,7 +63,7 @@ namespace ReplayFixer.Models.Deserializers
                     // getting the date is a bit tricky, because there time may be of 24 hour format or 12 hours
                     // first try to get it with meridian
                     //var gameDate = new DateTime();
-                    var gameDate = string.Empty;    
+                    var gameDate = string.Empty;
                     var ci = new CultureInfo("en-US");
                     var formats = new[] { "dd/MM/yyyy HH:mm", "M-d-yyyy", "dd-MM-yyyy", "MM-dd-yyyy", "M.d.yyyy", "dd.MM.yyyy", "MM.dd.yyyy", "d/M/yyyy HH:MM", "d/M/yyyy H:m" }
                             .Union(ci.DateTimeFormat.GetAllDateTimePatterns()).ToArray();
@@ -95,12 +105,12 @@ namespace ReplayFixer.Models.Deserializers
 
                     }
 
-                // whenever there is a _ (discard) it will store unnecessary bytes
+                    // whenever there is a _ (discard) it will store unnecessary bytes
 
 
-                // next we need relic chunky and 20 bytes not human readable behind it, included
-                // so we store the position of the first relic chunky plus those 20 extra bytes behind relic chunky.
-                int relicChunkyAndExtraPosition = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.RELIC_CHUNKY);
+                    // next we need relic chunky and 20 bytes not human readable behind it, included
+                    // so we store the position of the first relic chunky plus those 20 extra bytes behind relic chunky.
+                    int relicChunkyAndExtraPosition = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.RELIC_CHUNKY);
 
                     // there are a couple bytes after we take the date that we don't need so we erase those based off the relic chunky
                     // we don't need to store trash
@@ -130,7 +140,7 @@ namespace ReplayFixer.Models.Deserializers
                     // erase all the bytes before the first RelicCoH%
                     // test if it's RelicCOH or RelicCoH for some reason some replays have a lower case o instead of capital O
                     int relicCoHIndex = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.RELICCOH);
-                    if(relicCoHIndex <= 0) relicCoHIndex = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.RELICCoH);
+                    if (relicCoHIndex <= 0) relicCoHIndex = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.RELICCoH);
                     _ = bufferQueued.DequeueChunk(relicCoHIndex).ToArray();
                     int firstFoldInfoPosition = HelperMethods.SearchFirst(bufferQueued.ToArray(), COH_IDS.FOLDINFO);
 
@@ -153,7 +163,7 @@ namespace ReplayFixer.Models.Deserializers
                     string workshopFileName = string.Empty;
                     string workshopFileFullPath = string.Empty;
                     // verify we are about to read RelicCOH chunk
-                    if (firstRelicCOHDecoded.StartsWith(Encoding.ASCII.GetString(COH_IDS.RELICCOH)) || 
+                    if (firstRelicCOHDecoded.StartsWith(Encoding.ASCII.GetString(COH_IDS.RELICCOH)) ||
                         firstRelicCOHDecoded.StartsWith(Encoding.ASCII.GetString(COH_IDS.RELICCoH)))
                     {
                         // find the first DATA chunk
@@ -177,8 +187,8 @@ namespace ReplayFixer.Models.Deserializers
                             readingChar = headerDATAChunk[++index];
                         }
                         //char[] firstDataChunk = firstRelicCOHDecoded.TakeWhile(x => x);
-                        
-                            
+
+
                         // from here we can explode the string
                         string[] explodedHeaderDATA = headerDATAString.Split('\\');
 
@@ -203,7 +213,7 @@ namespace ReplayFixer.Models.Deserializers
                     workshopFileFullPath = Encoding.ASCII.GetString(firstRelicCOHQueued.RemoveByteNulls().ToArray());
                     // we can extract the workshop file name by using a simple digit regex that ends in a .sga extension
                     Match match = Regex.Match(workshopFileFullPath, HelperMethods.ValidSGAExpression);//"(([0-9]+)|([a-zA-Z ]+)).sga");
-                    if(match.Success)
+                    if (match.Success)
                         workshopFileName = match.Value;
                     Replay replay = new Replay()
                     {

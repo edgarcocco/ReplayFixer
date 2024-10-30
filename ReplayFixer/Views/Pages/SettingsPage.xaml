@@ -15,20 +15,32 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition />
         </Grid.RowDefinitions>
-            <GroupBox>
-                <GroupBox.Header>
-                    <TextBlock>General</TextBlock>
-                </GroupBox.Header>
-                <StackPanel Orientation="Vertical">
-                    <TextBlock VerticalAlignment="Center" FontSize="16">Theme:</TextBlock>
-                    <ComboBox x:Name="themeOptionsComboBox"></ComboBox>
-                    <Separator />
-                    <TextBlock VerticalAlignment="Center" FontSize="16">Prefered Starting Path:</TextBlock>
-                    <ComboBox x:Name="preferedStartingPathComboBox"></ComboBox>
-                </StackPanel>
-            </GroupBox>
+        <GroupBox>
+            <GroupBox.Header>
+                <TextBlock>General</TextBlock>
+            </GroupBox.Header>
+            <StackPanel Orientation="Vertical">
+                <TextBlock VerticalAlignment="Center" FontSize="16">Theme:</TextBlock>
+                <ComboBox x:Name="themeOptionsComboBox"></ComboBox>
+                <Separator />
+                <TextBlock VerticalAlignment="Center" FontSize="16">Prefered Starting Path:</TextBlock>
+                <ComboBox x:Name="preferedStartingPathComboBox"></ComboBox>
+                <Separator />
+                <TextBlock VerticalAlignment="Center" FontSize="16">Delimiter (change if having issues):</TextBlock>
+                <TextBlock VerticalAlignment="Center" FontSize="12">Delete replays.data in the root directory</TextBlock>
+                <TextBlock VerticalAlignment="Center" FontSize="12">of the application after changing delimiter.</TextBlock>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" x:Name="delimiterTextBox" MaxLength="1"/>
+                    <TextBox Grid.Column="1" IsReadOnly="True" x:Name="delimiterHexTextBox" />
+                </Grid>
+            </StackPanel>
+        </GroupBox>
             <GroupBox Grid.Column="1">
                 <GroupBox.Header>
                     <TextBlock>Localization</TextBlock>

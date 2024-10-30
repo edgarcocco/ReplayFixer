@@ -32,6 +32,10 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <ScrollViewer Grid.Column="0" >
                 <StackPanel Margin="5" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Center">
                     <ui:CardAction
@@ -64,21 +68,20 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <StackPanel Grid.ColumnSpan="2">
-                    <TextBlock>Changelogs</TextBlock>
-                    <TextBox MaxHeight="150" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" Text="{Binding ViewModel.ChangelogText}"></TextBox>
-                </StackPanel>
-                <ui:Anchor Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Top"  ToolTip="Join Our Discord!" Background="CornflowerBlue" NavigateUri="https://discord.gg/XP42RBd7"  Appearance="Primary" Foreground="White" Height="88" Width="119" Icon="Empty">
+
+                <TextBlock>About:</TextBlock>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.RowSpan="3" Grid.ColumnSpan="3">
+                <ui:Anchor ToolTip="Join Our Discord!" Background="CornflowerBlue" NavigateUri="https://discord.gg/HJmTkJuVtE"  Appearance="Primary" Foreground="White" Height="88" Width="112" Icon="Empty">
                     <ui:Anchor.Content>
                         <StackPanel Orientation="Vertical">
                             <ui:SymbolIcon Symbol="Link48" Foreground="White" />
-                            <TextBlock FontSize="8.6" Text="{Binding ViewModel.MessageService.InfoMadeBy}" />
+                            <TextBlock FontSize="8.6" TextWrapping="Wrap" Text="{Binding ViewModel.MessageService.InfoMadeBy}" />
                         </StackPanel>
                     </ui:Anchor.Content>
                 </ui:Anchor>
-                <ui:Anchor Grid.Row="2" VerticalAlignment="Top" Grid.Column="1" ToolTip="Cus I don't drink coffee..." Background="#DA5B6E" NavigateUri="https://ko-fi.com/edo1999" Appearance="Primary" Foreground="White" Height="88" Width="118" Icon="Empty" >
+                <ui:Anchor VerticalAlignment="Top" ToolTip="Cus I don't drink coffee..." Background="#DA5B6E" NavigateUri="https://ko-fi.com/edo1999" Appearance="Primary" Foreground="White" Height="88" Width="112" Icon="Empty" >
                     <ui:Anchor.Content>
                         <StackPanel Orientation="Vertical">
 
@@ -88,14 +91,19 @@
                     </ui:Anchor.Content>
 
                 </ui:Anchor>
-                <ui:Button Grid.Row="3"  Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" ToolTip="About" Background="#EDAE4C" ui:Icon="QuestionCircle48" ui:IconForeground="White" Appearance="Primary" Foreground="White" Height="88" Width="118" >
+                <ui:Button ToolTip="About" Background="#EDAE4C" ui:Icon="QuestionCircle48" ui:IconForeground="White" Appearance="Primary" Foreground="White" Height="88" Width="112" >
                     <behaviors:Interaction.Triggers>
                         <behaviors:EventTrigger EventName="Click">
                             <behaviors:InvokeCommandAction Command="{Binding ViewModel.OpenAboutDialogCommand}" />
                         </behaviors:EventTrigger>
                     </behaviors:Interaction.Triggers>
                 </ui:Button>
+                </StackPanel>
             </Grid>
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+                    <TextBlock>Changelogs</TextBlock>
+                    <TextBox MaxHeight="150" TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" Text="{Binding ViewModel.ChangelogText}"></TextBox>
+                </StackPanel>
         </Grid>
 
     </Grid>

@@ -21,7 +21,6 @@ namespace ReplayFixer.Tool
         {
             string filePath = "";
             string outputFileName = "replay.json";
-            byte delimiter = 0x24;
 
             if (args.Length < 1)
             {
@@ -30,8 +29,8 @@ namespace ReplayFixer.Tool
             }
 
             filePath = args[0];
-            outputFileName = args[1];
-            delimiter = Convert.ToByte(args[2]);
+            if (args.Length > 1)
+                outputFileName = args[1];
 
 
             /*for (int i = 0; i < args.Length; i++)

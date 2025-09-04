@@ -12,6 +12,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Extensions\**" />
+    <Compile Remove="Models\Data\**" />
+    <Compile Remove="Models\Deserializers\**" />
+    <EmbeddedResource Remove="Extensions\**" />
+    <EmbeddedResource Remove="Models\Data\**" />
+    <EmbeddedResource Remove="Models\Deserializers\**" />
+    <None Remove="Extensions\**" />
+    <None Remove="Models\Data\**" />
+    <None Remove="Models\Deserializers\**" />
+    <Page Remove="Extensions\**" />
+    <Page Remove="Models\Data\**" />
+    <Page Remove="Models\Deserializers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\Helpers\COH_IDS.cs" />
+    <Compile Remove="Models\Helpers\HelperMethods.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="services-icon-png-2296-Windows.ico" />
   </ItemGroup>
 
@@ -30,6 +50,10 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Thinksharp.FeatureTour" Version="2.1.0" />
     <PackageReference Include="WPF-UI" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReplayFixer.Library\ReplayFixer.Library.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿using ReplayFixer.Models.Data;
+﻿using ReplayFixer.Library.Models.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

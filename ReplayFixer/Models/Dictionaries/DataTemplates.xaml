@@ -3,7 +3,7 @@
                     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                     xmlns:local="clr-namespace:ReplayFixer"
                     xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-                    xmlns:data="clr-namespace:ReplayFixer.Models.Data"
+                    xmlns:data="clr-namespace:ReplayFixer.Library.Models.Data;assembly=ReplayFixer.Library"
                     xmlns:viewModels="clr-namespace:ReplayFixer.ViewModels"
                     xmlns:pages="clr-namespace:ReplayFixer.Views.Pages"
                     xmlns:interfaces="clr-namespace:Wpf.Ui.Common.Interfaces;assembly=Wpf.Ui"

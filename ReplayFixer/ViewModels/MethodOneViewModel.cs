@@ -7,7 +7,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using ReplayFixer.Models.Data;
 using ReplayFixer.Services.Contracts;
 using Wpf.Ui.Common.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
@@ -16,7 +15,6 @@ using Microsoft.Win32;
 using System.Reflection;
 using System.IO;
 using ReplayFixer.Models.Helpers;
-using ReplayFixer.Extensions;
 using ReplayFixer.Models.Deserializers;
 using Microsoft.Extensions.Options;
 using ReplayFixer.Views.UserControls;
@@ -29,6 +27,9 @@ using Microsoft.Xaml.Behaviors.Core;
 using System.Configuration;
 using ReplayFixer.Services;
 using System.Threading;
+using ReplayFixer.Library.Models.Data;
+using ReplayFixer.Libary;
+using ReplayFixer.Library.Extensions;
 
 namespace ReplayFixer.ViewModels
 {

@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReplayFixer", "ReplayFixer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplayFixer.Tests", "ReplayFixer.Tests\ReplayFixer.Tests.csproj", "{08CEDA9C-4D73-42FD-ACCE-B7D9DF66518E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplayFixer.Library", "ReplayFixer.Library\ReplayFixer.Library.csproj", "{4A64BEE5-A3EB-49F0-9DCB-FFF3B2BF8FE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplayFixer.Tool", "ReplayFixer.Tool\ReplayFixer.Tool.csproj", "{0363218E-39BA-40E4-9FBE-1C2139875370}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{08CEDA9C-4D73-42FD-ACCE-B7D9DF66518E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08CEDA9C-4D73-42FD-ACCE-B7D9DF66518E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08CEDA9C-4D73-42FD-ACCE-B7D9DF66518E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A64BEE5-A3EB-49F0-9DCB-FFF3B2BF8FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A64BEE5-A3EB-49F0-9DCB-FFF3B2BF8FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A64BEE5-A3EB-49F0-9DCB-FFF3B2BF8FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A64BEE5-A3EB-49F0-9DCB-FFF3B2BF8FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0363218E-39BA-40E4-9FBE-1C2139875370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0363218E-39BA-40E4-9FBE-1C2139875370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0363218E-39BA-40E4-9FBE-1C2139875370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0363218E-39BA-40E4-9FBE-1C2139875370}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

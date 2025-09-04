@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReplayFixer\ReplayFixer.csproj" />
+    <ProjectReference Include="..\ReplayFixer.Library\ReplayFixer.Library.csproj" />
   </ItemGroup>
 
 </Project>

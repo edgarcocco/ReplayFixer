@@ -19,10 +19,22 @@ namespace ReplayFixer.Tool
         }
         public void Run(string[] args)
         {
-            byte delimiter = 0x24;
             string filePath = "";
             string outputFileName = "replay.json";
-            for (int i = 0; i < args.Length; i++)
+            byte delimiter = 0x24;
+
+            if (args.Length < 1)
+            {
+                _logger.LogError("You must provide a file path to a replay file as the first argument");
+                return;
+            }
+
+            filePath = args[0];
+            outputFileName = args[1];
+            delimiter = Convert.ToByte(args[2]);
+
+
+            /*for (int i = 0; i < args.Length; i++)
             {
                 if (args[i].StartsWith("--filePath="))
                 {
@@ -36,13 +48,15 @@ namespace ReplayFixer.Tool
                 {
                     outputFileName = args[i].Substring(17);
                 }
-            }
+            }*/
 
             _logger.LogInformation("Starting ReplayFixer.Tool");
 
             var replay = new Library.Models.Data.Replay();
             using (FileStream stream = File.Open(filePath, FileMode.Open))
+            {
                 replay = ReplayDeserializer.FromStream(stream, delimiter);
+            }
             JsonSerialization.WriteToJsonFile(outputFileName, replay);
             _logger.LogInformation(replay?.ToString());
             _logger.LogInformation("Output this information to {outputFileName} which is a JSON file", outputFileName);

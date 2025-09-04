@@ -54,7 +54,7 @@ namespace ReplayFixer.Tool
             var replay = new Library.Models.Data.Replay();
             using (FileStream stream = File.Open(filePath, FileMode.Open))
             {
-                replay = ReplayDeserializer.FromStream(stream, delimiter);
+                replay = ReplayDeserializer.FromStream(stream);
             }
             JsonSerialization.WriteToJsonFile(outputFileName, replay);
             _logger.LogInformation(replay?.ToString());
